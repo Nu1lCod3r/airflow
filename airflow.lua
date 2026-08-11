@@ -65,11 +65,18 @@ local function stroke(parent, color, alpha, thick)
 	}, parent)
 end
 
+-- Roblox renamed UIPadding Pad* -> Padding*; support both
+local padProbe = Instance.new("UIPadding")
+local PAD = pcall(function() local _ = padProbe.PaddingLeft end) and "Padding" or "Pad"
+padProbe:Destroy()
+
 local function padding(parent, l, t, r, b)
-	return new("UIPadding", {
-		PadLeft = UDim.new(0, l or 0), PadTop = UDim.new(0, t or 0),
-		PadRight = UDim.new(0, r or 0), PadBottom = UDim.new(0, b or 0),
-	}, parent)
+	local p = new("UIPadding", {}, parent)
+	p[PAD .. "Left"] = UDim.new(0, l or 0)
+	p[PAD .. "Top"] = UDim.new(0, t or 0)
+	p[PAD .. "Right"] = UDim.new(0, r or 0)
+	p[PAD .. "Bottom"] = UDim.new(0, b or 0)
+	return p
 end
 
 local function label(parent, text, size, color, align)
