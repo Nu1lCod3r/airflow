@@ -65,17 +65,19 @@ local function stroke(parent, color, alpha, thick)
 	}, parent)
 end
 
--- Roblox renamed UIPadding Pad* -> Padding*; support both
-local padProbe = Instance.new("UIPadding")
-local PAD = pcall(function() local _ = padProbe.PaddingLeft end) and "Padding" or "Pad"
-padProbe:Destroy()
+-- Roblox renamed UIPadding Pad* -> Padding*; try both names per side
+local function setPad(p, side, v)
+	for _, name in ipairs({ "Padding" .. side, "Pad" .. side }) do
+		if pcall(function() p[name] = v end) then return end
+	end
+end
 
 local function padding(parent, l, t, r, b)
 	local p = new("UIPadding", {}, parent)
-	p[PAD .. "Left"] = UDim.new(0, l or 0)
-	p[PAD .. "Top"] = UDim.new(0, t or 0)
-	p[PAD .. "Right"] = UDim.new(0, r or 0)
-	p[PAD .. "Bottom"] = UDim.new(0, b or 0)
+	setPad(p, "Left", UDim.new(0, l or 0))
+	setPad(p, "Top", UDim.new(0, t or 0))
+	setPad(p, "Right", UDim.new(0, r or 0))
+	setPad(p, "Bottom", UDim.new(0, b or 0))
 	return p
 end
 
